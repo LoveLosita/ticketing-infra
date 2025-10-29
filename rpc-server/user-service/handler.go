@@ -5,6 +5,7 @@ import (
 	"ticketing-infra/rpc-server/user-service/conv"
 	"ticketing-infra/rpc-server/user-service/dao"
 	user "ticketing-infra/rpc-server/user-service/kitex_gen/user"
+	"ticketing-infra/rpc-server/utils"
 
 	"github.com/cloudwego/kitex/pkg/kerrors"
 )
@@ -25,6 +26,12 @@ func (s *UserServiceImpl) UserRegister(ctx context.Context, req *user.UserRegist
 		return nil, kerrors.NewBizStatusError(40001, "Username already exists")
 	}
 	//3.插入新用户信息
+	//3.1.加密密码
+	hashedPwd, err := utils.HashPassword(req.Password)
+	if err != nil {
+		return nil, kerrors.NewBizStatusError(50000, "Error when hashing password")
+	}
+	registerUser.Password = hashedPwd
 	userId, err := dao.InsertNewUserInfo(registerUser)
 	if err != nil {
 		return nil, kerrors.NewBizStatusError(50000, "Database error when inserting new registerUser")
