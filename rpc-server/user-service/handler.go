@@ -114,9 +114,3 @@ func (s *UserServiceImpl) UserChangePassword(ctx context.Context, req *user.User
 	//6.返回修改成功响应
 	return &user.UserChangePasswordResponse{}, nil
 }
-
-// UserRefreshToken implements the UserServiceImpl interface.
-func (s *UserServiceImpl) UserRefreshToken(ctx context.Context, req *user.UserRefreshTokenRequest) (resp *user.UserRefreshTokenResponse, err error) {
-	// TODO: Your code here...
-	return
-}

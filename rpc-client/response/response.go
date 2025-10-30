@@ -58,4 +58,8 @@ var ( //请求相关的响应
 		Status: "40008",
 		Info:   "wrong token type",
 	}
+	InvalidRefreshToken = Response{ //刷新令牌无效
+		Status: "40010",
+		Info:   "invalid refresh token",
+	}
 )

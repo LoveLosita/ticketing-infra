@@ -14,7 +14,6 @@ type Client interface {
 	UserRegister(ctx context.Context, req *user.UserRegisterRequest, callOptions ...callopt.Option) (r *user.UserRegisterResponse, err error)
 	UserLogin(ctx context.Context, req *user.UserLoginRequest, callOptions ...callopt.Option) (r *user.UserLoginResponse, err error)
 	UserChangePassword(ctx context.Context, req *user.UserChangePasswordRequest, callOptions ...callopt.Option) (r *user.UserChangePasswordResponse, err error)
-	UserRefreshToken(ctx context.Context, req *user.UserRefreshTokenRequest, callOptions ...callopt.Option) (r *user.UserRefreshTokenResponse, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -59,9 +58,4 @@ func (p *kUserServiceClient) UserLogin(ctx context.Context, req *user.UserLoginR
 func (p *kUserServiceClient) UserChangePassword(ctx context.Context, req *user.UserChangePasswordRequest, callOptions ...callopt.Option) (r *user.UserChangePasswordResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.UserChangePassword(ctx, req)
-}
-
-func (p *kUserServiceClient) UserRefreshToken(ctx context.Context, req *user.UserRefreshTokenRequest, callOptions ...callopt.Option) (r *user.UserRefreshTokenResponse, err error) {
-	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.UserRefreshToken(ctx, req)
 }

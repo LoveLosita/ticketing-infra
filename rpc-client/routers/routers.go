@@ -13,5 +13,6 @@ func RegisterRouters() {
 	userGroup.POST("/register", api.UserRegisterHandler)
 	userGroup.POST("/login", api.UserLoginHandler)
 	userGroup.POST("/change-pwd", api.UserChangePasswordHandler)
+	userGroup.POST("/refresh-token", api.UserRefreshTokenHandler)
 	h.Spin()
 }

@@ -2,8 +2,10 @@ package api
 
 import (
 	"context"
+	"errors"
 	"strconv"
 	"ticketing-infra/rpc-client/auth"
+	"ticketing-infra/rpc-client/model"
 	"time"
 
 	"github.com/cloudwego/hertz/pkg/app"
@@ -100,4 +102,28 @@ func UserChangePasswordHandler(ctx context.Context, c *app.RequestContext) {
 	}
 	//3.返回结果给前端
 	c.JSON(consts.StatusOK, response.Ok)
+}
+
+func UserRefreshTokenHandler(ctx context.Context, c *app.RequestContext) {
+	//1.先获取前端传来的参数
+	var refreshReq model.Tokens
+	err := c.BindJSON(&refreshReq)
+	if err != nil {
+		c.JSON(consts.StatusBadRequest, response.WrongParamType)
+		return
+	}
+	//2.直接刷新token
+	tokens, err := auth.RefreshTokenHandler(refreshReq.RefreshToken)
+	if err != nil {
+		switch {
+		case errors.Is(err, response.InvalidRefreshToken), errors.Is(err, response.InvalidClaims),
+			errors.Is(err, response.InvalidTokenSingingMethod): //如果是无效刷新令牌或者无效claims或者无效签名方法
+			c.JSON(consts.StatusBadRequest, err)
+			return
+		default:
+			c.JSON(consts.StatusInternalServerError, response.InternalError(err))
+		}
+	}
+	//3.返回结果给前端
+	c.JSON(consts.StatusOK, response.Respond(response.Ok, tokens))
 }

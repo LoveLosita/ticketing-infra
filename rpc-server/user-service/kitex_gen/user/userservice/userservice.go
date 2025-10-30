@@ -34,13 +34,6 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"user_refresh_token": kitex.NewMethodInfo(
-		userRefreshTokenHandler,
-		newUserServiceUserRefreshTokenArgs,
-		newUserServiceUserRefreshTokenResult,
-		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
-	),
 }
 
 var (
@@ -161,24 +154,6 @@ func newUserServiceUserChangePasswordResult() interface{} {
 	return user.NewUserServiceUserChangePasswordResult()
 }
 
-func userRefreshTokenHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*user.UserServiceUserRefreshTokenArgs)
-	realResult := result.(*user.UserServiceUserRefreshTokenResult)
-	success, err := handler.(user.UserService).UserRefreshToken(ctx, realArg.Req)
-	if err != nil {
-		return err
-	}
-	realResult.Success = success
-	return nil
-}
-func newUserServiceUserRefreshTokenArgs() interface{} {
-	return user.NewUserServiceUserRefreshTokenArgs()
-}
-
-func newUserServiceUserRefreshTokenResult() interface{} {
-	return user.NewUserServiceUserRefreshTokenResult()
-}
-
 type kClient struct {
 	c client.Client
 }
@@ -214,16 +189,6 @@ func (p *kClient) UserChangePassword(ctx context.Context, req *user.UserChangePa
 	_args.Req = req
 	var _result user.UserServiceUserChangePasswordResult
 	if err = p.c.Call(ctx, "user_change_password", &_args, &_result); err != nil {
-		return
-	}
-	return _result.GetSuccess(), nil
-}
-
-func (p *kClient) UserRefreshToken(ctx context.Context, req *user.UserRefreshTokenRequest) (r *user.UserRefreshTokenResponse, err error) {
-	var _args user.UserServiceUserRefreshTokenArgs
-	_args.Req = req
-	var _result user.UserServiceUserRefreshTokenResult
-	if err = p.c.Call(ctx, "user_refresh_token", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
