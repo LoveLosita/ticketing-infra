@@ -75,3 +75,29 @@ func UserLoginHandler(ctx context.Context, c *app.RequestContext) {
 	})
 	c.JSON(consts.StatusOK, loginResp)
 }
+
+func UserChangePasswordHandler(ctx context.Context, c *app.RequestContext) {
+	//1.先获取前端传来的参数
+	var changePwdReq user.UserChangePasswordRequest
+	err := c.BindJSON(&changePwdReq)
+	if err != nil {
+		c.JSON(consts.StatusBadRequest, response.WrongParamType)
+		return
+	}
+	//2.调用rpc服务端的修改密码接口
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5) //设置超时时间
+	defer cancel()
+	_, err = init_client.NewUserClient.UserChangePassword(ctx, &changePwdReq)
+	if err != nil {
+		if bizErr, isBizErr := kerrors.FromBizStatusError(err); isBizErr {
+			res := strconv.Itoa(int(bizErr.BizStatusCode()))
+			c.JSON(consts.StatusBadRequest, response.Response{Status: res, Info: bizErr.BizMessage()})
+			return
+		} else {
+			c.JSON(consts.StatusInternalServerError, response.InternalError(err))
+			return
+		}
+	}
+	//3.返回结果给前端
+	c.JSON(consts.StatusOK, response.Ok)
+}

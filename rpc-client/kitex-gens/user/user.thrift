@@ -26,7 +26,6 @@ struct userChangePasswordRequest { #用户修改密码请求
 }
 
 struct userChangePasswordResponse { #用户修改密码响应
-  1: required bool success;
 }
 
 struct userRefreshTokenRequest { #刷新token请求

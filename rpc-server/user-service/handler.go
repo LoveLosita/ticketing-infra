@@ -77,8 +77,42 @@ func (s *UserServiceImpl) UserLogin(ctx context.Context, req *user.UserLoginRequ
 
 // UserChangePassword implements the UserServiceImpl interface.
 func (s *UserServiceImpl) UserChangePassword(ctx context.Context, req *user.UserChangePasswordRequest) (resp *user.UserChangePasswordResponse, err error) {
-	// TODO: Your code here...
-	return
+	//1.先将请求转换为model.User
+	changePwdUser := conv.ToModelChangePwdUser(*req)
+	//2。查看该用户是否存在
+	result, err := dao.IfUsernameExists(changePwdUser.Username)
+	if err != nil {
+		return nil, kerrors.NewBizStatusError(50000, "Database error when checking username existence")
+	}
+	if result == false { //用户不存在
+		return nil, kerrors.NewBizStatusError(40003, "Username does not exist")
+	}
+	//3.获取用户的加密密码
+	hashedPwd, err := dao.GetUserHashedPassword(changePwdUser.Username)
+	if err != nil {
+		return nil, kerrors.NewBizStatusError(50000, "Database error when getting user hashed password")
+	}
+	//4.对比旧密码
+	result, err = utils.CompareHashPwdAndPwd(hashedPwd, changePwdUser.Password)
+	if err != nil {
+		return nil, kerrors.NewBizStatusError(50000, "Error when comparing hashed password and password")
+	}
+	if result == false { //旧密码错误
+		return nil, kerrors.NewBizStatusError(40009, "Wrong old password")
+	}
+	//5.修改密码
+	//5.1.加密新密码
+	newHashedPwd, err := utils.HashPassword(req.NewPassword_)
+	if err != nil {
+		return nil, kerrors.NewBizStatusError(50000, "Error when hashing new password")
+	}
+	//5.2.更新密码到数据库
+	err = dao.ChangeUserPassword(changePwdUser.Username, newHashedPwd)
+	if err != nil {
+		return nil, kerrors.NewBizStatusError(50000, "Database error when changing user password")
+	}
+	//6.返回修改成功响应
+	return &user.UserChangePasswordResponse{}, nil
 }
 
 // UserRefreshToken implements the UserServiceImpl interface.

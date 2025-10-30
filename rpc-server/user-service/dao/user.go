@@ -45,3 +45,11 @@ func GetUserIDByUsername(username string) (int, error) {
 	}
 	return int(user.ID), nil
 }
+
+func ChangeUserPassword(userName string, newHashedPwd string) error {
+	result := inits.Db.Model(&model.User{}).Where("username = ?", userName).Update("password", newHashedPwd)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}

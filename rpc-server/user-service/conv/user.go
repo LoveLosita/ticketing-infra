@@ -24,3 +24,10 @@ func ToModelLoginUser(registerUser user.UserLoginRequest) model.User {
 	newUser.Password = registerUser.Password
 	return newUser
 }
+
+func ToModelChangePwdUser(changePwdUser user.UserChangePasswordRequest) model.User {
+	var userModel model.User
+	userModel.Username = changePwdUser.Username
+	userModel.Password = changePwdUser.OldPassword
+	return userModel
+}
