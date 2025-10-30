@@ -11,6 +11,6 @@ func RegisterRouters() {
 	userGroup := h.Group("/user")
 
 	userGroup.POST("/register", api.UserRegisterHandler)
-
+	userGroup.POST("/login", api.UserLoginHandler)
 	h.Spin()
 }

@@ -24,3 +24,24 @@ func IfUsernameExists(name string) (bool, error) {
 	}
 	return true, nil
 }
+
+func GetUserHashedPassword(username string) (string, error) {
+	var user model.User
+	result := inits.Db.First(&user, "username = ?", username)
+	if result.Error != nil {
+		if result.Error.Error() == "record not found" {
+			return "", nil
+		}
+		return "", result.Error
+	}
+	return user.Password, nil
+}
+
+func GetUserIDByUsername(username string) (int, error) {
+	var user model.User
+	result := inits.Db.First(&user, "username = ?", username)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+	return int(user.ID), nil
+}

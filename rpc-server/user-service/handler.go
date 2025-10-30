@@ -43,8 +43,36 @@ func (s *UserServiceImpl) UserRegister(ctx context.Context, req *user.UserRegist
 
 // UserLogin implements the UserServiceImpl interface.
 func (s *UserServiceImpl) UserLogin(ctx context.Context, req *user.UserLoginRequest) (resp *user.UserLoginResponse, err error) {
-	// TODO: Your code here...
-	return
+	//1.先将请求转换为model.User
+	loginUser := conv.ToModelLoginUser(*req)
+	//2.再看看用户是否存在
+	result, err := dao.IfUsernameExists(loginUser.Username)
+	if err != nil {
+		return nil, kerrors.NewBizStatusError(50000, "Database error when checking username existence")
+	}
+	if result == false { //用户不存在
+		return nil, kerrors.NewBizStatusError(40003, "Username does not exist")
+	}
+	//3.获取用户的加密密码
+	hashedPwd, err := dao.GetUserHashedPassword(loginUser.Username)
+	if err != nil {
+		return nil, kerrors.NewBizStatusError(50000, "Database error when getting user hashed password")
+	}
+	//4.对比密码
+	result, err = utils.CompareHashPwdAndPwd(hashedPwd, loginUser.Password)
+	if err != nil {
+		return nil, kerrors.NewBizStatusError(50000, "Error when comparing hashed password and password")
+	}
+	if result == false { //密码错误
+		return nil, kerrors.NewBizStatusError(40004, "Wrong password")
+	}
+	//5.获取用户ID
+	userId, err := dao.GetUserIDByUsername(loginUser.Username)
+	if err != nil {
+		return nil, kerrors.NewBizStatusError(50000, "Database error when getting user ID by username")
+	}
+	//6.返回验证成功响应
+	return &user.UserLoginResponse{Id: int32(userId)}, nil
 }
 
 // UserChangePassword implements the UserServiceImpl interface.

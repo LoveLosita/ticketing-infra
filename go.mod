@@ -7,6 +7,7 @@ require (
 	github.com/cloudwego/hertz v0.10.3
 	github.com/cloudwego/kitex v0.15.2
 	github.com/cloudwego/kitex/pkg/protocol/bthrift v0.0.0-20251017083623-6ca038a5887c
+	github.com/golang-jwt/jwt/v4 v4.5.2
 	github.com/redis/go-redis/v9 v9.16.0
 	golang.org/x/crypto v0.22.0
 	gorm.io/driver/mysql v1.6.0

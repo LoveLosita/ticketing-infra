@@ -40,4 +40,22 @@ var ( //请求相关的响应
 		Status: "40002",
 		Info:   "wrong param type",
 	}
+	InvalidTokenSingingMethod = Response{ //jwt token签名方法无效
+		Status: "40005",
+		Info:   "invalid signing method",
+	}
+
+	InvalidToken = Response{ //无效token
+		Status: "40006",
+		Info:   "invalid token",
+	}
+
+	InvalidClaims = Response{ //无效声明
+		Status: "40007",
+		Info:   "invalid claims",
+	}
+	WrongTokenType = Response{ //无效令牌类型
+		Status: "40008",
+		Info:   "wrong token type",
+	}
 )

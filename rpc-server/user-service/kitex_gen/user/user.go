@@ -658,7 +658,7 @@ func (p *UserLoginRequest) Field2DeepEqual(src string) bool {
 }
 
 type UserLoginResponse struct {
-	Token string `thrift:"token,1,required" frugal:"1,required,string" json:"token"`
+	Id int32 `thrift:"id,1,required" frugal:"1,required,i32" json:"id"`
 }
 
 func NewUserLoginResponse() *UserLoginResponse {
@@ -668,22 +668,22 @@ func NewUserLoginResponse() *UserLoginResponse {
 func (p *UserLoginResponse) InitDefault() {
 }
 
-func (p *UserLoginResponse) GetToken() (v string) {
-	return p.Token
+func (p *UserLoginResponse) GetId() (v int32) {
+	return p.Id
 }
-func (p *UserLoginResponse) SetToken(val string) {
-	p.Token = val
+func (p *UserLoginResponse) SetId(val int32) {
+	p.Id = val
 }
 
 var fieldIDToName_UserLoginResponse = map[int16]string{
-	1: "token",
+	1: "id",
 }
 
 func (p *UserLoginResponse) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
-	var issetToken bool = false
+	var issetId bool = false
 
 	if _, err = iprot.ReadStructBegin(); err != nil {
 		goto ReadStructBeginError
@@ -700,11 +700,11 @@ func (p *UserLoginResponse) Read(iprot thrift.TProtocol) (err error) {
 
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I32 {
 				if err = p.ReadField1(iprot); err != nil {
 					goto ReadFieldError
 				}
-				issetToken = true
+				issetId = true
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
 				goto SkipFieldError
 			}
@@ -721,7 +721,7 @@ func (p *UserLoginResponse) Read(iprot thrift.TProtocol) (err error) {
 		goto ReadStructEndError
 	}
 
-	if !issetToken {
+	if !issetId {
 		fieldId = 1
 		goto RequiredFieldNotSetError
 	}
@@ -745,13 +745,13 @@ RequiredFieldNotSetError:
 
 func (p *UserLoginResponse) ReadField1(iprot thrift.TProtocol) error {
 
-	var _field string
-	if v, err := iprot.ReadString(); err != nil {
+	var _field int32
+	if v, err := iprot.ReadI32(); err != nil {
 		return err
 	} else {
 		_field = v
 	}
-	p.Token = _field
+	p.Id = _field
 	return nil
 }
 
@@ -785,10 +785,10 @@ WriteStructEndError:
 }
 
 func (p *UserLoginResponse) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("token", thrift.STRING, 1); err != nil {
+	if err = oprot.WriteFieldBegin("id", thrift.I32, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Token); err != nil {
+	if err := oprot.WriteI32(p.Id); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -815,15 +815,15 @@ func (p *UserLoginResponse) DeepEqual(ano *UserLoginResponse) bool {
 	} else if p == nil || ano == nil {
 		return false
 	}
-	if !p.Field1DeepEqual(ano.Token) {
+	if !p.Field1DeepEqual(ano.Id) {
 		return false
 	}
 	return true
 }
 
-func (p *UserLoginResponse) Field1DeepEqual(src string) bool {
+func (p *UserLoginResponse) Field1DeepEqual(src int32) bool {
 
-	if strings.Compare(p.Token, src) != 0 {
+	if p.Id != src {
 		return false
 	}
 	return true

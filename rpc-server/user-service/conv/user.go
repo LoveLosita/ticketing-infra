@@ -17,3 +17,10 @@ func ToProtoRegisterUser(respID int) user.UserRegisterResponse {
 	registerResp.Id = int64(respID)
 	return registerResp
 }
+
+func ToModelLoginUser(registerUser user.UserLoginRequest) model.User {
+	var newUser model.User
+	newUser.Username = registerUser.Username
+	newUser.Password = registerUser.Password
+	return newUser
+}

@@ -6,7 +6,7 @@ struct userRegisterRequest { #用户注册请求
 }
 
 struct userRegisterResponse { #用户注册响应
-  1: required i64 id;
+  1: required i64 id
 }
 
 struct userLoginRequest { #用户登录请求
@@ -15,7 +15,7 @@ struct userLoginRequest { #用户登录请求
 }
 
 struct userLoginResponse { #用户登录响应
-  1: required string token;
+    1:required i32 id
 }
 
 struct userChangePasswordRequest { #用户修改密码请求
@@ -25,7 +25,7 @@ struct userChangePasswordRequest { #用户修改密码请求
 }
 
 struct userChangePasswordResponse { #用户修改密码响应
-  1: required bool success;
+  1: required bool success
 }
 
 struct userRefreshTokenRequest { #刷新token请求
@@ -34,7 +34,7 @@ struct userRefreshTokenRequest { #刷新token请求
 }
 
 struct userRefreshTokenResponse { #刷新token响应
-  1: required string token;
+  1: required string token
 }
 
 service UserService {

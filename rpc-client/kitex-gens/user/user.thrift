@@ -15,8 +15,9 @@ struct userLoginRequest { #用户登录请求
 }
 
 struct userLoginResponse { #用户登录响应
-  1: required string token;
+    1:required i32 id
 }
+
 
 struct userChangePasswordRequest { #用户修改密码请求
   1: required string username
