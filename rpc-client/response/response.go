@@ -62,4 +62,8 @@ var ( //请求相关的响应
 		Status: "40010",
 		Info:   "invalid refresh token",
 	}
+	MissingToken = Response{ //缺少token
+		Status: "40011",
+		Info:   "missing token",
+	}
 )

@@ -127,3 +127,32 @@ func UserRefreshTokenHandler(ctx context.Context, c *app.RequestContext) {
 	//3.返回结果给前端
 	c.JSON(consts.StatusOK, response.Respond(response.Ok, tokens))
 }
+
+func UserSetAdminHandler(ctx context.Context, c *app.RequestContext) {
+	//1.先获取前端传来的参数
+	var setAdminReq user.UserSetAdminRequest
+	err := c.BindJSON(&setAdminReq)
+	if err != nil {
+		c.JSON(consts.StatusBadRequest, response.WrongParamType)
+		return
+	}
+	//再从上下文中获取操作者id
+	handlerID := c.GetFloat64("user_id")
+	setAdminReq.OperatorId = int32(handlerID)
+	//2.调用rpc服务端的设置管理员接口
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5) //设置超时时间
+	defer cancel()
+	_, err = init_client.NewUserClient.UserSetAdmin(ctx, &setAdminReq)
+	if err != nil {
+		if bizErr, isBizErr := kerrors.FromBizStatusError(err); isBizErr {
+			res := strconv.Itoa(int(bizErr.BizStatusCode()))
+			c.JSON(consts.StatusBadRequest, response.Response{Status: res, Info: bizErr.BizMessage()})
+			return
+		} else {
+			c.JSON(consts.StatusInternalServerError, response.InternalError(err))
+			return
+		}
+	}
+	//3.返回结果给前端
+	c.JSON(consts.StatusOK, response.Ok)
+}

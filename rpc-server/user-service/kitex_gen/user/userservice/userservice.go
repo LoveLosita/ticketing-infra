@@ -34,6 +34,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
+	"user_set_admin": kitex.NewMethodInfo(
+		userSetAdminHandler,
+		newUserServiceUserSetAdminArgs,
+		newUserServiceUserSetAdminResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
 }
 
 var (
@@ -154,6 +161,24 @@ func newUserServiceUserChangePasswordResult() interface{} {
 	return user.NewUserServiceUserChangePasswordResult()
 }
 
+func userSetAdminHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*user.UserServiceUserSetAdminArgs)
+	realResult := result.(*user.UserServiceUserSetAdminResult)
+	success, err := handler.(user.UserService).UserSetAdmin(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newUserServiceUserSetAdminArgs() interface{} {
+	return user.NewUserServiceUserSetAdminArgs()
+}
+
+func newUserServiceUserSetAdminResult() interface{} {
+	return user.NewUserServiceUserSetAdminResult()
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -189,6 +214,16 @@ func (p *kClient) UserChangePassword(ctx context.Context, req *user.UserChangePa
 	_args.Req = req
 	var _result user.UserServiceUserChangePasswordResult
 	if err = p.c.Call(ctx, "user_change_password", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) UserSetAdmin(ctx context.Context, req *user.UserSetAdminRequest) (r *user.UserSetAdminResponse, err error) {
+	var _args user.UserServiceUserSetAdminArgs
+	_args.Req = req
+	var _result user.UserServiceUserSetAdminResult
+	if err = p.c.Call(ctx, "user_set_admin", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

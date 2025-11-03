@@ -27,9 +27,17 @@ struct userChangePasswordRequest { #用户修改密码请求
 struct userChangePasswordResponse { #用户修改密码响应
 }
 
+struct userSetAdminRequest { #设置用户为管理员请求
+  1: required i32 operator_id
+  2: required i32 target_id
+}
+
+struct userSetAdminResponse { #设置用户为管理员响应
+}
 
 service UserService {
   userRegisterResponse user_register(1: userRegisterRequest req) #用户注册
   userLoginResponse user_login(1: userLoginRequest req) #用户登录
   userChangePasswordResponse user_change_password(1: userChangePasswordRequest req) #用户修改密码
+  userSetAdminResponse user_set_admin(1: userSetAdminRequest req) #设置用户为管理员
 }

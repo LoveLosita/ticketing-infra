@@ -114,3 +114,37 @@ func (s *UserServiceImpl) UserChangePassword(ctx context.Context, req *user.User
 	//6.返回修改成功响应
 	return &user.UserChangePasswordResponse{}, nil
 }
+
+func (s *UserServiceImpl) UserSetAdmin(ctx context.Context, req *user.UserSetAdminRequest) (resp *user.UserSetAdminResponse, err error) {
+	//1.查看该用户是否存在
+	result, err := dao.IfUserIDExists(int(req.TargetId))
+	if err != nil {
+		return nil, kerrors.NewBizStatusError(50000, "Database error when checking user ID existence")
+	}
+	if result == false { //用户不存在
+		return nil, kerrors.NewBizStatusError(40003, "User ID does not exist")
+	}
+	//2.检查操作者是否是Owner角色
+	role, err := dao.GetUserRoleByID(int(req.OperatorId))
+	if err != nil {
+		return nil, kerrors.NewBizStatusError(50000, "Database error when getting user role by ID")
+	}
+	if role != "owner" {
+		return nil, kerrors.NewBizStatusError(40012, "does not have permission")
+	}
+	//3.检查目标用户是否已经是管理员或者更高角色
+	targetRole, err := dao.GetUserRoleByID(int(req.TargetId))
+	if err != nil {
+		return nil, kerrors.NewBizStatusError(50000, "Database error when getting target user role by ID")
+	}
+	if targetRole == "admin" || targetRole == "owner" {
+		return nil, kerrors.NewBizStatusError(40013, "Target user is already admin or higher")
+	}
+	//4.设置用户为管理员
+	err = dao.SetUserRoleToAdmin(int(req.TargetId))
+	if err != nil {
+		return nil, kerrors.NewBizStatusError(50000, "Database error when setting user role to admin")
+	}
+	//5.返回设置成功响应
+	return &user.UserSetAdminResponse{}, nil
+}

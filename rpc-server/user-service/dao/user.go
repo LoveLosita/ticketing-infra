@@ -53,3 +53,32 @@ func ChangeUserPassword(userName string, newHashedPwd string) error {
 	}
 	return nil
 }
+
+func IfUserIDExists(userID int) (bool, error) {
+	var user model.User
+	result := inits.Db.First(&user, "id = ?", userID)
+	if result.Error != nil {
+		if result.Error.Error() == "record not found" {
+			return false, nil
+		}
+		return false, result.Error
+	}
+	return true, nil
+}
+
+func SetUserRoleToAdmin(userID int) error {
+	result := inits.Db.Model(&model.User{}).Where("id = ?", userID).Update("role", "admin")
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
+
+func GetUserRoleByID(userID int) (string, error) {
+	var user model.User
+	result := inits.Db.First(&user, "id = ?", userID)
+	if result.Error != nil {
+		return "", result.Error
+	}
+	return user.Role, nil
+}
